@@ -47,4 +47,4 @@ const newService = {
 
 // console.log({"New Service": await manager.addService(newService)})
 
-console.log({"Deleted":  await manager.deleteService(1)})
+// console.log({"Deleted":  await manager.deleteService(1)})
