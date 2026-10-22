@@ -73,7 +73,7 @@ export default class ServiceManager {
 
     await this.#save(services);
 
-    return { payload: services[index], status: "ok" };
+    return { payload: services[index], status: "Ok" };
   }
 
   async deleteService(idService){
@@ -82,7 +82,7 @@ export default class ServiceManager {
 
     const filteredServices = services.filter(service => service.id !== id)
     if(services.length === filteredServices.length){
-        return{payload : idService, status: "notOk", message: "notFoundedService"}
+        return{payload : idService, status: "NotOk", message: "notFoundedService"}
     }
     await this.#save(filteredServices)
 
