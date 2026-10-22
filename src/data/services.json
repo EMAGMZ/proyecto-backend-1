@@ -3,6 +3,7 @@
     "id": 2,
     "name": "Coloración",
     "description": "Aplicación de tintura para renovar o cambiar el color del cabello.",
+    "duration": 90,
     "price": 18000,
     "category": "Peluquería",
     "available": true
@@ -11,6 +12,7 @@
     "id": 3,
     "name": "Masaje relajante",
     "description": "Masaje corporal para aliviar tensiones y favorecer la relajación.",
+    "duration": 60,
     "price": 20000,
     "category": "Spa",
     "available": true
@@ -19,6 +21,7 @@
     "id": 4,
     "name": "Limpieza facial",
     "description": "Tratamiento facial para limpiar la piel y eliminar impurezas.",
+    "duration": 45,
     "price": 15000,
     "category": "Spa",
     "available": false
@@ -27,26 +30,18 @@
     "id": 5,
     "name": "Tratamiento capilar",
     "description": "Hidratación profunda para mejorar la suavidad y el brillo del cabello.",
+    "duration": 30,
     "price": 12000,
     "category": "Peluquería",
     "available": true
   },
   {
+    "id": 6,
     "name": "Corte de cabello premium",
-    "description": "Corte con lavado ",
+    "description": "Corte con lavado",
     "duration": 40,
     "price": 25000,
-    "category": "Peluqueria",
-    "available": true,
-    "id": 6
-  },
-  {
-    "name": "Corte de cabello premium",
-    "description": "Corte con lavado ",
-    "duration": 40,
-    "price": 25000,
-    "category": "Peluqueria",
-    "available": true,
-    "id": 7
+    "category": "Peluquería",
+    "available": true
   }
 ]
