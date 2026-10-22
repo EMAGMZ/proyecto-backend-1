@@ -36,7 +36,7 @@ export default class ServiceManager {
 
   async getServiceById(idService) {
     const data = await this.getServices();
-    return data.find((service) => service.id === idService);
+    return data.find((service) => service.id === Number(idService)) ?? null;
   }
 
   async addService(serviceData) {
