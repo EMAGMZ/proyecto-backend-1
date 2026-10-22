@@ -26,7 +26,7 @@
 
 
 import path from "node:path";
-import ServiceManager from "./Controllers/services.controller.js";
+import ServiceManager from "./managers/ServiceManager.js";
  
 const DATABASE_NAME = "services.json"
 const databasePath = path.join(import.meta.dirname, "data", DATABASE_NAME)
@@ -48,4 +48,3 @@ const newService = {
 // console.log({"New Service": await manager.addService(newService)})
 
 console.log({"Deleted":  await manager.deleteService(1)})
-
