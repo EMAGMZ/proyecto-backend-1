@@ -12,7 +12,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 
-const REQUIRED_FILS = [
+const REQUIRED_FIELDS = [
   "name",
   "description",
   "duration",
@@ -40,22 +40,21 @@ export default class ServiceManager {
   }
 
   async addService(serviceData) {
-    for (const field of REQUIRED_FILS) {
+    for (const field of REQUIRED_FIELDS) {
       if (serviceData[field] === undefined || serviceData[field] === null) {
         throw new Error(`El campo ${field} esta faltante`);
       }
-      const data = await this.getServices();
-      console.log(data)
-      const id =
-        data.length > 0
-          ? Math.max(...data.map((service) => service.id)) + 1
-          : 1;
-      const newService = { ...serviceData, id };
-
-      data.push(newService);
-      await this.#save(data);
-      return { payload: newService, status: "Ok"}
     }
+    const data = await this.getServices();
+    const id =
+      data.length > 0
+        ? Math.max(...data.map((service) => service.id)) + 1
+        : 1;
+    const newService = { ...serviceData, id };
+
+    data.push(newService);
+    await this.#save(data);
+    return { payload: newService, status: "Ok"}
   }
   async updateService(idService, updatedServiceData) {
     const services = await this.getServices();
