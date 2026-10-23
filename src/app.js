@@ -24,7 +24,7 @@
 
 // console.log('7. Fin del script');
 
-
+import config from "./config/env.config.js";
 import path from "node:path";
 import ServiceManager from "./managers/ServiceManager.js";
  
@@ -33,6 +33,7 @@ const databasePath = path.join(import.meta.dirname, "data", DATABASE_NAME)
 
 const manager = new ServiceManager(databasePath)
 
+console.log({ entorno: config.nodeEnv, puerto: config.port });
 console.log({"services": await manager.getServices()})
 console.log(await manager.getServiceById(4))
 
