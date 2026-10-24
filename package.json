@@ -1,7 +1,7 @@
 {
-  "name": "clase-01",
+  "name": "proyecto-backend-1",
   "version": "1.0.0",
-  "description": "",
+  "description": "Administrador de servicios para un sistema de turnos y reservas con Node.js y ESM",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
