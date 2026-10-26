@@ -26,7 +26,6 @@
 
 import express from "express";
 import path from "node:path";
-import config from "./config/env.config.js";
 import ServiceManager from "./managers/ServiceManager.js";
 
 const DATABASE_NAME = "services.json";
@@ -34,6 +33,8 @@ const databasePath = path.join(import.meta.dirname, "data", DATABASE_NAME);
 
 const manager = new ServiceManager(databasePath);
 const app = express();
+
+app.use(express.json());
 
 app.get("/api/services", async (req, res) => {
   try {
@@ -50,6 +51,4 @@ app.get("/api/services", async (req, res) => {
   }
 });
 
-app.listen(config.port, () => {
-  console.log(`Servidor escuchando en el puerto ${config.port} (${config.nodeEnv})`);
-});
+export { app };
