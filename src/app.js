@@ -24,28 +24,32 @@
 
 // console.log('7. Fin del script');
 
-import config from "./config/env.config.js";
+import express from "express";
 import path from "node:path";
+import config from "./config/env.config.js";
 import ServiceManager from "./managers/ServiceManager.js";
- 
-const DATABASE_NAME = "services.json"
-const databasePath = path.join(import.meta.dirname, "data", DATABASE_NAME)
 
-const manager = new ServiceManager(databasePath)
+const DATABASE_NAME = "services.json";
+const databasePath = path.join(import.meta.dirname, "data", DATABASE_NAME);
 
-console.log({ entorno: config.nodeEnv, puerto: config.port });
-console.log({"services": await manager.getServices()})
-console.log(await manager.getServiceById(4))
+const manager = new ServiceManager(databasePath);
+const app = express();
 
-const newService = {
-    name: "Corte de cabello premium",
-    description: "Corte con lavado ",
-    duration: 40,
-    price: 25000,
-    category:"Peluqueria",
-    available: true
-}
+app.get("/api/services", async (req, res) => {
+  try {
+    const services = await manager.getServices();
+    res.status(200).json({
+      status: "success",
+      payload: services,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al obtener los servicios",
+    });
+  }
+});
 
-// console.log({"New Service": await manager.addService(newService)})
-
-// console.log({"Deleted":  await manager.deleteService(1)})
+app.listen(config.port, () => {
+  console.log(`Servidor escuchando en el puerto ${config.port} (${config.nodeEnv})`);
+});
