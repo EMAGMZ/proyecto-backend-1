@@ -1,6 +1,7 @@
 import { Router } from "express";
 import path from "node:path";
 import ServiceManager from "../managers/ServiceManager.js";
+import { validateService } from "../middlewares/validateService.middleware.js";
 
 const router = Router();
 
@@ -47,6 +48,22 @@ router.get("/:sid", async (req, res) => {
     res.status(500).json({
       status: "error",
       message: "Error al obtener el servicio",
+    });
+  }
+});
+
+router.post("/", validateService, async (req, res) => {
+  try {
+    const result = await manager.addService(req.body);
+
+    res.status(201).json({
+      status: "success",
+      payload: result.payload,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al crear el servicio",
     });
   }
 });
