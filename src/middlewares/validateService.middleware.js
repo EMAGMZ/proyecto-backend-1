@@ -8,8 +8,10 @@ const REQUIRED_FIELDS = [
 ];
 
 export function validateService(req, res, next) {
+  const body = req.body ?? {};
+
   const missingFields = REQUIRED_FIELDS.filter(
-    (field) => req.body[field] === undefined || req.body[field] === null,
+    (field) => body[field] === undefined || body[field] === null,
   );
 
   if (missingFields.length > 0) {
