@@ -68,4 +68,28 @@ router.post("/", validateService, async (req, res) => {
   }
 });
 
+router.put("/:sid", validateService, async (req, res) => {
+  try {
+    const { sid } = req.params;
+    const result = await manager.updateService(sid, req.body);
+
+    if (result.status === "NotOk") {
+      return res.status(404).json({
+        status: "error",
+        message: "Servicio no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      payload: result.payload,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al actualizar el servicio",
+    });
+  }
+});
+
 export default router;
