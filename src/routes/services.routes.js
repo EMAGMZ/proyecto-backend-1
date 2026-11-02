@@ -15,7 +15,22 @@ const manager = new ServiceManager(databasePath);
 
 router.get("/", async (req, res) => {
   try {
-    const services = await manager.getServices();
+    const { category, available } = req.query;
+    let services = await manager.getServices();
+
+    if (category) {
+      services = services.filter(
+        (service) => service.category.toLowerCase() === category.toLowerCase(),
+      );
+    }
+
+    if (available !== undefined) {
+      const isAvailable = available === "true";
+      services = services.filter(
+        (service) => service.available === isAvailable,
+      );
+    }
+
     res.status(200).json({
       status: "success",
       payload: services,
