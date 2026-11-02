@@ -42,7 +42,7 @@ npm run dev
 | Variable | Descripción | Ejemplo |
 |---|---|---|
 | `PORT` | Puerto del servidor. Obligatoria: si falta o no es un número, la app no inicia. | `8080` |
-| `NODE_ENV` | Entorno de ejecución. Si no se define, toma `development`. | `development` |
+| `NODE_ENV` | Entorno de ejecución. Obligatoria: si falta, la app no inicia. | `development` |
 
 ## Recurso `services`
 
