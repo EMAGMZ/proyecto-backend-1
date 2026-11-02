@@ -1,6 +1,6 @@
 # Administrador de servicios
 
-Proyecto Node.js con ESM que implementa la clase `ServiceManager` para administrar los servicios de un sistema de turnos y reservas. Los datos se guardan en un archivo JSON.
+Proyecto Node.js con ESM y Express que expone una API REST para administrar los servicios de un sistema de turnos y reservas. La lógica de datos está en la clase `ServiceManager` y los datos se guardan en un archivo JSON.
 
 ## Estructura
 
@@ -10,10 +10,20 @@ src/
 │   └── env.config.js
 ├── managers/
 │   └── ServiceManager.js
+├── middlewares/
+│   ├── routingDetector.middleware.js
+│   └── validateService.middleware.js
+├── routes/
+│   └── services.router.js
 ├── data/
 │   └── services.json
-└── app.js
+├── app.js
+└── server.js
 ```
+
+- `app.js`: levanta el servidor en el puerto definido en `.env`.
+- `server.js`: crea la app de Express, registra los middlewares y monta el router en `/api/services`.
+- `services.router.js`: define los endpoints del recurso `services`.
 
 ## Instalación
 
@@ -55,6 +65,51 @@ npm run dev
 | `price` | number | Precio |
 | `category` | string | Categoría |
 | `available` | boolean | Si está disponible |
+
+## Endpoints
+
+Base: `http://localhost:8080/api/services`
+
+| Método | Ruta | Descripción | Respuestas |
+|---|---|---|---|
+| GET | `/api/services` | Lista todos los servicios. Acepta filtros `?category=` y `?available=` | 200 |
+| GET | `/api/services/:sid` | Devuelve un servicio por id | 200, 404 |
+| POST | `/api/services` | Crea un servicio. El `id` se genera automáticamente | 201, 400 |
+| PUT | `/api/services/:sid` | Actualiza un servicio. No permite modificar el `id` | 200, 400, 404 |
+| DELETE | `/api/services/:sid` | Elimina un servicio | 200, 404 |
+
+### Ejemplos
+
+Filtrar por categoría y disponibilidad:
+
+```
+GET /api/services?category=spa&available=true
+```
+
+Crear un servicio (body JSON):
+
+```json
+{
+  "name": "Consulta médica general",
+  "description": "Consulta clínica de rutina",
+  "duration": 30,
+  "price": 12000,
+  "category": "Salud",
+  "available": true
+}
+```
+
+Respuesta exitosa:
+
+```json
+{ "status": "success", "payload": { "...": "...", "id": 7 } }
+```
+
+Respuesta de error (faltan campos):
+
+```json
+{ "status": "error", "message": "Faltan campos obligatorios", "missingFields": ["price"] }
+```
 
 ## Uso de `ServiceManager`
 
