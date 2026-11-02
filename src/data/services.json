@@ -43,5 +43,14 @@
     "price": 25000,
     "category": "Peluquería",
     "available": true
+  },
+  {
+    "name": "Consulta actualizada",
+    "description": "Descripción modificada",
+    "duration": 45,
+    "price": 18000,
+    "category": "General",
+    "available": false,
+    "id": 7
   }
 ]
