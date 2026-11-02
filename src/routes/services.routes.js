@@ -92,4 +92,28 @@ router.put("/:sid", validateService, async (req, res) => {
   }
 });
 
+router.delete("/:sid", async (req, res) => {
+  try {
+    const { sid } = req.params;
+    const result = await manager.deleteService(sid);
+
+    if (result.status === "NotOk") {
+      return res.status(404).json({
+        status: "error",
+        message: "Servicio no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: `Servicio ${sid} eliminado`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al eliminar el servicio",
+    });
+  }
+});
+
 export default router;
