@@ -1,11 +1,4 @@
-const REQUIRED_FIELDS = [
-  "name",
-  "description",
-  "duration",
-  "price",
-  "category",
-  "available",
-];
+import { REQUIRED_FIELDS } from "../config/service.config.js";
 
 export function validateService(req, res, next) {
   const body = req.body ?? {};

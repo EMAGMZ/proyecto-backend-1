@@ -1,13 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-
-const REQUIRED_FIELDS = [
-  "name",
-  "description",
-  "duration",
-  "price",
-  "category",
-  "available",
-];
+import { REQUIRED_FIELDS } from "../config/service.config.js";
 
 export default class ServiceManager {
   constructor(databasePath) {
