@@ -24,8 +24,13 @@ export default class ServiceManager {
     }
   }
 
-  async #save(services) {
-    await writeFile(this.databasePath, JSON.stringify(services, null, 2));
+  async writeServices(services) {
+    try {
+      await writeFile(this.databasePath, JSON.stringify(services, null, 2));
+    } catch (error) {
+      console.log("Error al escribir el archivo:", error.message);
+      throw error;
+    }
   }
 
   async getServices() {
@@ -51,7 +56,7 @@ export default class ServiceManager {
     const newService = { ...serviceData, id };
 
     data.push(newService);
-    await this.#save(data);
+    await this.writeServices(data);
     return { payload: newService, status: "Ok" };
   }
 
@@ -70,7 +75,7 @@ export default class ServiceManager {
       ...dataToUpdate,
     };
 
-    await this.#save(services);
+    await this.writeServices(services);
 
     return { payload: services[index], status: "Ok" };
   }
@@ -83,7 +88,7 @@ export default class ServiceManager {
     if (services.length === filteredServices.length) {
       return { payload: idService, status: "NotOk", message: "notFoundedService" };
     }
-    await this.#save(filteredServices);
+    await this.writeServices(filteredServices);
 
     return { payload: idService, status: "Ok" };
   }
