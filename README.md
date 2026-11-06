@@ -75,7 +75,7 @@ Base: `http://localhost:8080/api/services`
 | GET | `/api/services` | Lista todos los servicios. Acepta filtros `?category=` y `?available=` | 200 |
 | GET | `/api/services/:sid` | Devuelve un servicio por id | 200, 404 |
 | POST | `/api/services` | Crea un servicio. El `id` se genera automáticamente | 201, 400 |
-| PUT | `/api/services/:sid` | Actualiza un servicio. No permite modificar el `id` | 200, 400, 404 |
+| PUT | `/api/services/:sid` | Actualiza solo los campos enviados en el body (actualización parcial). No permite modificar el `id` | 200, 404 |
 | DELETE | `/api/services/:sid` | Elimina un servicio | 200, 404 |
 
 ### Ejemplos

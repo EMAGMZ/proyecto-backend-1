@@ -83,7 +83,7 @@ router.post("/", validateService, async (req, res) => {
   }
 });
 
-router.put("/:sid", validateService, async (req, res) => {
+router.put("/:sid", async (req, res) => {
   try {
     const { sid } = req.params;
     const result = await manager.updateService(sid, req.body);
