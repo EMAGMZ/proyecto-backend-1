@@ -1,15 +1,3 @@
-// const getServices  = ()=>{}
-// const addServices = ()=>{}
-// const updateServices = ()=>{}
-// const deleteServices = ()=>{}
-
-// export{
-//     getServices,
-//     updateServices,
-//     addServices,
-//     deleteServices
-// }
-
 import { readFile, writeFile } from "node:fs/promises";
 
 const REQUIRED_FIELDS = [
@@ -26,12 +14,22 @@ export default class ServiceManager {
     this.databasePath = databasePath;
   }
 
+  async readServices() {
+    try {
+      const data = await readFile(this.databasePath, "utf-8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.log("Error al leer el archivo:", error.message);
+      return [];
+    }
+  }
+
   async #save(services) {
     await writeFile(this.databasePath, JSON.stringify(services, null, 2));
   }
+
   async getServices() {
-    const data = await readFile(this.databasePath, "utf-8");
-    return JSON.parse(data);
+    return await this.readServices();
   }
 
   async getServiceById(idService) {
@@ -54,8 +52,9 @@ export default class ServiceManager {
 
     data.push(newService);
     await this.#save(data);
-    return { payload: newService, status: "Ok"}
+    return { payload: newService, status: "Ok" };
   }
+
   async updateService(idService, updatedServiceData) {
     const services = await this.getServices();
     const index = services.findIndex(
@@ -76,18 +75,16 @@ export default class ServiceManager {
     return { payload: services[index], status: "Ok" };
   }
 
-  async deleteService(idService){
-    const services = await this.getServices()
-    const id = Number(idService)
+  async deleteService(idService) {
+    const services = await this.getServices();
+    const id = Number(idService);
 
-    const filteredServices = services.filter(service => service.id !== id)
-    if(services.length === filteredServices.length){
-        return{payload : idService, status: "NotOk", message: "notFoundedService"}
+    const filteredServices = services.filter((service) => service.id !== id);
+    if (services.length === filteredServices.length) {
+      return { payload: idService, status: "NotOk", message: "notFoundedService" };
     }
-    await this.#save(filteredServices)
+    await this.#save(filteredServices);
 
-    return { payload : idService, status: "Ok"}
-
-
+    return { payload: idService, status: "Ok" };
   }
 }
