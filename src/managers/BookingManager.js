@@ -49,4 +49,5 @@ export default class BookingManager {
     await this.writeBookings(bookings);
     return { payload: newBooking, status: "Ok" };
   }
+  
 }
