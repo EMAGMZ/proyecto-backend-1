@@ -49,5 +49,8 @@ export default class BookingManager {
     await this.writeBookings(bookings);
     return { payload: newBooking, status: "Ok" };
   }
-  
+  async getBookingById(idBooking) {
+    const bookings = await this.readBookings();
+    return bookings.find((booking) => booking.id === Number(idBooking)) ?? null;
+  }
 }
