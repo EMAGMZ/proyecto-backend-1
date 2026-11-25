@@ -56,7 +56,9 @@ export default class BookingManager {
 
   async addServiceToBooking(idBooking, idService) {
     const bookings = await this.readBookings();
-    const booking = bookings.find((booking) => booking.id === Number(idBooking));
+    const booking = bookings.find(
+      (booking) => booking.id === Number(idBooking),
+    );
     if (!booking) {
       return { payload: null, status: "NotOk", message: "Booking not found" };
     }
@@ -64,12 +66,11 @@ export default class BookingManager {
     const item = booking.services.find(
       (item) => item.service === Number(idService),
     );
-    
-    if (item){
+
+    if (item) {
       item.quantity = item.quantity + 1;
-    }else{
-      booking.services.push({ service: Number(idService), quantity
-: 1 })
+    } else {
+      booking.services.push({ service: Number(idService), quantity: 1 });
     }
     await this.writeBookings(bookings);
     return { payload: booking, status: "Ok" };
