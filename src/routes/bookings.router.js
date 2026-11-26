@@ -46,4 +46,36 @@ router.get("/:bid", async (req, res) => {
   }
 });
 
+router.post("/:bid/services/:sid", async (req, res) => {
+    try {
+        const { bid, sid } = req.params;
+
+        const service = await serviceManager.getServiceById(sid);
+        if (!service) {
+        return res.status(404).json({
+        status: "error",
+        message: "Servicio no encontrado",
+    });
+}
+    
+        const result = await bookingManager.addServiceToBooking(bid, sid);
+    if (result.status === "NotOk") {
+        return res.status(400).json({
+    status: "error",
+    message: "Reserva no encontrada",
+        });
+    }
+    res.status(200).json({
+        status: "success",
+        payload: result.payload,
+    })
+}catch (error) {
+    res.status(500).json({
+        status: "error",
+        message: "Error al agregar el servicio a la reserva",
+    });
+}
+});
+
+
 export default router;
