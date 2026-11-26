@@ -1,29 +1,35 @@
-# Administrador de servicios
+# Sistema de Turnos y Reservas
 
-Proyecto Node.js con ESM y Express que expone una API REST para administrar los servicios de un sistema de turnos y reservas. La lógica de datos está en la clase `ServiceManager` y los datos se guardan en un archivo JSON.
+Proyecto Node.js con ESM y Express que expone una API REST para administrar los servicios y las reservas de un sistema de turnos. La lógica de datos está en las clases `ServiceManager` y `BookingManager`, y los datos se guardan en archivos JSON.
 
 ## Estructura
 
 ```
 src/
 ├── config/
-│   └── env.config.js
+│   ├── env.config.js
+│   └── service.config.js
 ├── managers/
+│   ├── BookingManager.js
 │   └── ServiceManager.js
 ├── middlewares/
 │   ├── routingDetector.middleware.js
 │   └── validateService.middleware.js
 ├── routes/
+│   ├── bookings.router.js
 │   └── services.router.js
 ├── data/
+│   ├── bookings.json
 │   └── services.json
 ├── app.js
 └── server.js
 ```
 
 - `app.js`: levanta el servidor en el puerto definido en `.env`.
-- `server.js`: crea la app de Express, registra los middlewares y monta el router en `/api/services`.
+- `server.js`: crea la app de Express, registra los middlewares y monta los routers en `/api/services` y `/api/bookings`.
+- `service.config.js`: define los campos obligatorios de un servicio (`REQUIRED_FIELDS`).
 - `services.router.js`: define los endpoints del recurso `services`.
+- `bookings.router.js`: define los endpoints del recurso `bookings`.
 
 ## Instalación
 
@@ -66,9 +72,23 @@ npm run dev
 | `category` | string | Categoría |
 | `available` | boolean | Si está disponible |
 
+## Recurso `bookings`
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | number | Se genera automáticamente. No se recibe desde afuera. |
+| `clientName` | string | Nombre del cliente |
+| `clientEmail` | string | Email del cliente |
+| `date` | string | Fecha de la reserva (ej. `2026-12-01`) |
+| `time` | string | Hora de la reserva (ej. `10:00`) |
+| `status` | string | Estado de la reserva (ej. `pending`) |
+| `services` | array | Servicios de la reserva. Se genera automáticamente. |
+
+`services` es un array de objetos `{ service, quantity }`, donde `service` es el `id` del servicio y `quantity` la cantidad. Al crear la reserva arranca vacío (`[]`). Si se agrega un servicio que ya está en la reserva, no se agrega un segundo elemento: se incrementa su `quantity`.
+
 ## Endpoints
 
-Base: `http://localhost:8080/api/services`
+Base: `http://localhost:8080`
 
 | Método | Ruta | Descripción | Respuestas |
 |---|---|---|---|
@@ -77,6 +97,9 @@ Base: `http://localhost:8080/api/services`
 | POST | `/api/services` | Crea un servicio. El `id` se genera automáticamente | 201, 400 |
 | PUT | `/api/services/:sid` | Actualiza solo los campos enviados en el body (actualización parcial). No permite modificar el `id` | 200, 404 |
 | DELETE | `/api/services/:sid` | Elimina un servicio | 200, 404 |
+| POST | `/api/bookings` | Crea una reserva. El `id` se genera automáticamente y `services` arranca vacío | 201, 400 |
+| GET | `/api/bookings/:bid` | Devuelve una reserva por id | 200, 404 |
+| POST | `/api/bookings/:bid/services/:sid` | Agrega un servicio a la reserva. Si ya estaba, incrementa su `quantity` | 200, 404 (no existe la reserva o el servicio) |
 
 ### Ejemplos
 
@@ -109,6 +132,41 @@ Respuesta de error (faltan campos):
 
 ```json
 { "status": "error", "message": "Faltan campos obligatorios", "missingFields": ["price"] }
+```
+
+Crear una reserva (body JSON):
+
+```json
+{
+  "clientName": "Ana",
+  "clientEmail": "ana@mail.com",
+  "date": "2026-12-01",
+  "time": "10:00",
+  "status": "pending"
+}
+```
+
+Respuesta de error (falta un campo):
+
+```json
+{ "status": "error", "message": "El campo clientEmail esta faltante" }
+```
+
+Respuesta después de agregar el servicio `2` dos veces (`POST /api/bookings/1/services/2`):
+
+```json
+{
+  "status": "success",
+  "payload": {
+    "clientName": "Ana",
+    "clientEmail": "ana@mail.com",
+    "date": "2026-12-01",
+    "time": "10:00",
+    "status": "pending",
+    "id": 1,
+    "services": [{ "service": 2, "quantity": 2 }]
+  }
+}
 ```
 
 ## Uso de `ServiceManager`
@@ -169,4 +227,46 @@ Elimina el servicio.
 const result = await manager.deleteService(6);
 // { payload: 6, status: "Ok" }
 // Si no existe: { payload: 6, status: "NotOk", message: "notFoundedService" }
+```
+
+## Uso de `BookingManager`
+
+```js
+import BookingManager from "./managers/BookingManager.js";
+
+const manager = new BookingManager(databasePath);
+```
+
+### createBooking(bookingData)
+
+Valida que estén todos los campos obligatorios (`clientName`, `clientEmail`, `date`, `time`, `status`), genera el `id` e inicializa `services` como array vacío. Si falta un campo, lanza un error.
+
+```js
+const result = await manager.createBooking({
+  clientName: "Ana",
+  clientEmail: "ana@mail.com",
+  date: "2026-12-01",
+  time: "10:00",
+  status: "pending",
+});
+// { payload: { ...reserva, id: 1, services: [] }, status: "Ok" }
+// Si falta un campo: lanza Error("El campo clientEmail esta faltante")
+```
+
+### getBookingById(id)
+
+Devuelve la reserva o `null` si no existe.
+
+```js
+const booking = await manager.getBookingById(1);
+```
+
+### addServiceToBooking(idBooking, idService)
+
+Agrega el servicio a la reserva con `quantity: 1`. Si el servicio ya estaba, incrementa su `quantity`. No verifica que el servicio exista: eso lo hace el router antes de llamarlo.
+
+```js
+const result = await manager.addServiceToBooking(1, 2);
+// { payload: { ...reserva, services: [{ service: 2, quantity: 1 }] }, status: "Ok" }
+// Si la reserva no existe: { payload: null, status: "NotOk", message: "Booking not found" }
 ```
