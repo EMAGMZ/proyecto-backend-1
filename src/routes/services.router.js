@@ -25,6 +25,13 @@ router.get("/", async (req, res) => {
     }
 
     if (available !== undefined) {
+      if (available !== "true" && available !== "false") {
+        return res.status(400).json({
+          status: "error",
+          message: "El parámetro available debe ser true o false",
+        });
+      }
+
       const isAvailable = available === "true";
       services = services.filter(
         (service) => service.available === isAvailable,
