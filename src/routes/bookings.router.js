@@ -60,7 +60,7 @@ router.post("/:bid/services/:sid", async (req, res) => {
     
         const result = await bookingManager.addServiceToBooking(bid, sid);
     if (result.status === "NotOk") {
-        return res.status(400).json({
+        return res.status(404).json({
     status: "error",
     message: "Reserva no encontrada",
         });
