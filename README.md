@@ -101,12 +101,6 @@ Base: `http://localhost:8080`
 | GET | `/api/bookings/:bid` | Devuelve una reserva por id | 200, 404 |
 | POST | `/api/bookings/:bid/services/:sid` | Agrega un servicio a la reserva. Si ya estaba, incrementa su `quantity` | 200, 404 (no existe la reserva o el servicio) |
 
-## Validaciones
-
-- **services**: `name`, `description` y `category` deben ser texto; `duration` y `price`, números; `available`, booleano. Si algún campo tiene otro tipo, responde 400 con la lista `invalidFields`.
-- **bookings**: los 5 campos (`clientName`, `clientEmail`, `date`, `time`, `status`) deben ser texto. Si no, responde 400 indicando el campo que falla.
-- En ambos recursos se descartan los campos que no forman parte del recurso, y el `id` nunca se toma del body.
-
 ### Ejemplos
 
 Filtrar por categoría y disponibilidad:
@@ -180,6 +174,12 @@ Respuesta después de agregar el servicio `2` dos veces (`POST /api/bookings/1/s
   }
 }
 ```
+
+## Validaciones
+
+- **services**: `name`, `description` y `category` deben ser texto; `duration` y `price`, números; `available`, booleano. Si algún campo tiene otro tipo, responde 400 con la lista `invalidFields`.
+- **bookings**: los 5 campos (`clientName`, `clientEmail`, `date`, `time`, `status`) deben ser texto. Si no, responde 400 indicando el campo que falla.
+- En ambos recursos se descartan los campos que no forman parte del recurso, y el `id` nunca se toma del body.
 
 ## Uso de `ServiceManager`
 
