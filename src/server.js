@@ -1,14 +1,6 @@
-import express from "express";
-import servicesRouter from "./routes/services.router.js";
-import bookingsRouter from "./routes/bookings.router.js";
-import RoutingDetector from "./middlewares/routingDetector.middleware.js";
+import { app } from "./app.js";
+import env from "./config/env.config.js";
 
-const app = express();
-
-app.use(express.json());
-app.use(RoutingDetector);
-
-app.use("/api/services", servicesRouter);
-app.use("/api/bookings", bookingsRouter);
-
-export default app;
+app.listen(env.port, () => {
+  console.log(`Servidor escuchando en http://localhost:${env.port}`);
+});

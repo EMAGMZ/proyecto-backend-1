@@ -25,8 +25,8 @@ src/
 └── server.js
 ```
 
-- `app.js`: levanta el servidor en el puerto definido en `.env`.
-- `server.js`: crea la app de Express, registra los middlewares y monta los routers en `/api/services` y `/api/bookings`.
+- `app.js`: crea la app de Express, registra los middlewares y monta los routers en `/api/services` y `/api/bookings`.
+- `server.js`: levanta el servidor en el puerto definido en `.env`.
 - `service.config.js`: define los campos obligatorios de un servicio (`REQUIRED_FIELDS`).
 - `services.router.js`: define los endpoints del recurso `services`.
 - `bookings.router.js`: define los endpoints del recurso `bookings`.
