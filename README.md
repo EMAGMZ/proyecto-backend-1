@@ -92,14 +92,20 @@ Base: `http://localhost:8080`
 
 | Método | Ruta | Descripción | Respuestas |
 |---|---|---|---|
-| GET | `/api/services` | Lista todos los servicios. Acepta filtros `?category=` y `?available=` | 200 |
+| GET | `/api/services` | Lista todos los servicios. Acepta filtros `?category=` y `?available=` | 200, 400 (si `available` no es `true` o `false`) |
 | GET | `/api/services/:sid` | Devuelve un servicio por id | 200, 404 |
-| POST | `/api/services` | Crea un servicio. El `id` se genera automáticamente | 201, 400 |
-| PUT | `/api/services/:sid` | Actualiza solo los campos enviados en el body (actualización parcial). No permite modificar el `id` | 200, 404 |
+| POST | `/api/services` | Crea un servicio. El `id` se genera automáticamente | 201, 400 (faltan campos o tipo de dato inválido) |
+| PUT | `/api/services/:sid` | Actualiza solo los campos enviados en el body (actualización parcial). No permite modificar el `id` | 200, 400 (tipo de dato inválido), 404 |
 | DELETE | `/api/services/:sid` | Elimina un servicio | 200, 404 |
-| POST | `/api/bookings` | Crea una reserva. El `id` se genera automáticamente y `services` arranca vacío | 201, 400 |
+| POST | `/api/bookings` | Crea una reserva. El `id` se genera automáticamente y `services` arranca vacío | 201, 400 (falta un campo o no es texto) |
 | GET | `/api/bookings/:bid` | Devuelve una reserva por id | 200, 404 |
 | POST | `/api/bookings/:bid/services/:sid` | Agrega un servicio a la reserva. Si ya estaba, incrementa su `quantity` | 200, 404 (no existe la reserva o el servicio) |
+
+## Validaciones
+
+- **services**: `name`, `description` y `category` deben ser texto; `duration` y `price`, números; `available`, booleano. Si algún campo tiene otro tipo, responde 400 con la lista `invalidFields`.
+- **bookings**: los 5 campos (`clientName`, `clientEmail`, `date`, `time`, `status`) deben ser texto. Si no, responde 400 indicando el campo que falla.
+- En ambos recursos se descartan los campos que no forman parte del recurso, y el `id` nunca se toma del body.
 
 ### Ejemplos
 
@@ -132,6 +138,12 @@ Respuesta de error (faltan campos):
 
 ```json
 { "status": "error", "message": "Faltan campos obligatorios", "missingFields": ["price"] }
+```
+
+Respuesta de error (tipo de dato inválido):
+
+```json
+{ "status": "error", "message": "Hay campos con un tipo de dato inválido", "invalidFields": ["price", "available"] }
 ```
 
 Crear una reserva (body JSON):
@@ -239,7 +251,7 @@ const manager = new BookingManager(databasePath);
 
 ### createBooking(bookingData)
 
-Valida que estén todos los campos obligatorios (`clientName`, `clientEmail`, `date`, `time`, `status`), genera el `id` e inicializa `services` como array vacío. Si falta un campo, lanza un error.
+Valida que estén todos los campos obligatorios (`clientName`, `clientEmail`, `date`, `time`, `status`), valida que todos sean texto, descarta los campos extra que no forman parte de la reserva, genera el `id` e inicializa `services` como array vacío. Si falta un campo o no es texto, lanza un error.
 
 ```js
 const result = await manager.createBooking({
@@ -251,6 +263,7 @@ const result = await manager.createBooking({
 });
 // { payload: { ...reserva, id: 1, services: [] }, status: "Ok" }
 // Si falta un campo: lanza Error("El campo clientEmail esta faltante")
+// Si un campo no es texto: lanza Error("El campo date debe ser texto")
 ```
 
 ### getBookingById(id)
