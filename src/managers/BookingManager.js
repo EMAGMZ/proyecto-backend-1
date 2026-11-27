@@ -43,7 +43,11 @@ export default class BookingManager {
       bookings.length > 0
         ? Math.max(...bookings.map((booking) => booking.id)) + 1
         : 1;
-    const newBooking = { ...bookingData, id, services: [] };
+        const cleanData = {};
+    for (const field of REQUIRED_BOOKING_FIELDS) {
+      cleanData[field] = bookingData[field];
+    }
+    const newBooking = { ...cleanData, id, services: [] };
 
     bookings.push(newBooking);
     await this.writeBookings(bookings);
