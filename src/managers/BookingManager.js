@@ -37,13 +37,16 @@ export default class BookingManager {
       if (bookingData[field] === undefined || bookingData[field] === null) {
         throw new Error(`El campo ${field} esta faltante`);
       }
+      if (typeof bookingData[field] !== "string") {
+        throw new Error(`El campo ${field} debe ser texto`);
+      }
     }
     const bookings = await this.readBookings();
     const id =
       bookings.length > 0
         ? Math.max(...bookings.map((booking) => booking.id)) + 1
         : 1;
-        const cleanData = {};
+    const cleanData = {};
     for (const field of REQUIRED_BOOKING_FIELDS) {
       cleanData[field] = bookingData[field];
     }
