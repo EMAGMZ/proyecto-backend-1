@@ -45,7 +45,11 @@ export default class ServiceManager {
       data.length > 0
         ? Math.max(...data.map((service) => service.id)) + 1
         : 1;
-    const newService = { ...serviceData, id };
+       const cleanData = {};
+    for (const field of REQUIRED_FIELDS) {
+      cleanData[field] = serviceData[field];
+    }
+    const newService = { ...cleanData, id };
 
     data.push(newService);
     await this.writeServices(data);
@@ -61,7 +65,12 @@ export default class ServiceManager {
     if (index === -1) {
       return { payload: null, status: "NotOk" };
     }
-    const { id, ...dataToUpdate } = updatedServiceData;
+        const dataToUpdate = {};
+    for (const field of REQUIRED_FIELDS) {
+      if (updatedServiceData[field] !== undefined) {
+        dataToUpdate[field] = updatedServiceData[field];
+      }
+    }
     services[index] = {
       ...services[index],
       ...dataToUpdate,
