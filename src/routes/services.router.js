@@ -1,7 +1,7 @@
 import { Router } from "express";
 import path from "node:path";
 import ServiceManager from "../managers/ServiceManager.js";
-import { validateService } from "../middlewares/validateService.middleware.js";
+import { validateService, validateServiceTypes } from "../middlewares/validateService.middleware.js";
 
 const router = Router();
 
@@ -74,7 +74,7 @@ router.get("/:sid", async (req, res) => {
   }
 });
 
-router.post("/", validateService, async (req, res) => {
+router.post("/", validateService, validateServiceTypes, async (req, res) => {
   try {
     const result = await manager.addService(req.body);
 
@@ -90,7 +90,7 @@ router.post("/", validateService, async (req, res) => {
   }
 });
 
-router.put("/:sid", async (req, res) => {
+router.put("/:sid", validateServiceTypes, async (req, res) => {
   try {
     const { sid } = req.params;
     const result = await manager.updateService(sid, req.body);
